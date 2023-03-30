@@ -8,7 +8,7 @@ cloner le repertoire https://github.com/yangtangwandji/projet_1344.git
 
 # Configuration
 
-Utilise une base de donnee sql server, Modifier la chaine de connexion dans appsetting.json pour vous connecter a la base donnee.
+Utilise une base de donnee sql server, creer une base de donnee Modifier la chaine de connexion dans appsetting.json pour vous connecter a la base donnee.
 
 ouvrir la console du getionnaire du package nuget et taper la commande:
 update-database
