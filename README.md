@@ -2,6 +2,7 @@
 
 Ce projet permet d'enregistrer, suprimer, update et effaccer les joueurs.
 
+
 # Installation
 
 cloner le repertoire https://github.com/yangtangwandji/projet_1344.git
@@ -15,7 +16,7 @@ update-database
 
 # Utilisation
 
-Pour utiliser l'application ouvrir le projet lancer
+Pour utiliser l'application ouvrir le projet ouvrir le fichier .sln
 
 # Contribution
 
