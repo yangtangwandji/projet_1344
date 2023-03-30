@@ -1,0 +1,57 @@
+<p *ngIf="!joueur"><em>Loading...</em></p>
+<p><button class="btn btn-primary" [routerLink]="['/']">Retour a la liste</button></p>
+
+<div *ngIf="joueur" class="w-50 m-auto">
+  <form [formGroup]="createJoueurForm" (ngSubmit)="onSubmit()">
+    <div *ngIf="messageError" class="alert alert-danger">
+      {{messageError}}
+    </div>
+    <div class="mb-3">
+      <input class="form-control visually-hidden" formControlName="id" type="text" [ngClass]="{ 'is-invalid': submitted && f.id.errors }" />
+      <label for="nom" class="form-label">Nom</label>
+      <input class="form-control" for="nom" formControlName="nom" type="text" [ngClass]="{ 'is-invalid': submitted && f.nom.errors }"  />
+      <div *ngIf="f.nom.errors" class="invalid-feedback">
+        <div *ngIf="f.nom.errors.required" class="text-danger">nom est obligatoire</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="prenom" class="form-label">premom</label>
+      <input class="form-control" for="prenom" formControlName="prenom" type="text" [ngClass]="{ 'is-invalid': submitted && f.prenom.errors }" placeholder="prenom"  />
+      <div *ngIf="f.prenom.errors" class="invalid-feedback">
+        <div *ngIf="f.prenom.errors.required" class="text-danger">
+          le prenom est obligatoire
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="age" class="form-label">age</label>
+      <input class="form-control" for="age" formControlName="age" type="number" min="0" [ngClass]="{ 'is-invalid': submitted && f.age.errors }" placeholder="age"  />
+      <div *ngIf="f.age.errors" class="invalid-feedback">
+        <div *ngIf="f.age.errors.required" class="text-danger">
+          l'age est obligatoire
+        </div>
+        <div *ngIf="f.age.errors.min" class="text-danger">
+          pas d'age negatif
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="equipe" class="form-label">equipe</label>
+      <input class="form-control" for="equipe" formControlName="equipe" type="text" [ngClass]="{ 'is-invalid': submitted && f.equipe.errors }" placeholder="equipe"  />
+      <div *ngIf="f.equipe.errors" class="invalid-feedback">
+        <div *ngIf="f.equipe.errors.required" class="text-danger">
+          l'equipe est obligatoire
+        </div>
+      </div>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary"> Modifier </button>
+
+  </form>
+</div>
+
+

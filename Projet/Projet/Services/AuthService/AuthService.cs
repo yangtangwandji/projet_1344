@@ -1,0 +1,196 @@
+﻿//#nullable disable
+//using Microsoft.AspNetCore.Identity;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.IdentityModel.Tokens;
+//using Newtonsoft.Json;
+//using Projet.Models;
+//using Projet.Models.DTOS;
+//using System.IdentityModel.Tokens.Jwt;
+//using System.Security.Claims;
+//using System.Text;
+
+//namespace Projet.Services.AuthService
+//{
+//    public class AuthService : IAuthService
+//    {
+//        private readonly ApiContext _context;
+//        private readonly UserManager<User> _userManager;
+//        private readonly RoleManager<IdentityRole> _roleManager;
+//        private readonly SignInManager<User> _signInManager;
+//        private readonly IConfiguration _configuration;
+       
+        
+//        public AuthService(ApiContext context, UserManager<User> userManager,
+//            IConfiguration configuration, RoleManager<IdentityRole> roleManager,
+//            SignInManager<User> signInManager)
+//        {
+//            _context = context;
+//            _userManager = userManager;
+//            _configuration = configuration;
+//            _roleManager = roleManager;
+//            _signInManager = signInManager;
+//        }
+        
+
+
+        
+//        //public async Task<AuthResponseDto> Register([FromBody] RegisterUserDto dtoUser)
+//        //{
+//        //    var errors = new List<IdentityError>();
+//        //    var userExist = await _userManager.FindByEmailAsync(dtoUser.Email);
+//        //    if (userExist != null)
+//        //    {
+//        //        throw new Exception($"Email {dtoUser.Email} already in use");
+//        //    }
+
+//        //    var newUser = new User()
+//        //    {
+//        //        Email = dtoUser.Email,
+//        //        UserName = dtoUser.UserName,
+//        //    };
+
+//        //    var isCreated = await _userManager.CreateAsync(newUser, dtoUser.Password);
+//        //    if (isCreated.Succeeded)
+//        //    {
+//        //        //var roleName = await _roleManager.FindByNameAsync("user");
+//        //        //if (roleName == null)
+//        //        //{
+//        //        //    throw new Exception($"Role {roleName} not exist");
+//        //        //}
+
+//        //        //await _userManager.AddToRoleAsync(newUser, roleName.Name);
+//        //        return new AuthResponseDto()
+//        //        {
+//        //            UserId = newUser.Id,
+//        //            UserName = dtoUser.UserName,
+//        //            Email = dtoUser.Email,
+//        //            Token = await GenerateJwtToken(newUser)
+//        //        };
+//        //    }
+//        //    else
+//        //    {
+//        //        errors.AddRange(isCreated.Errors);
+//        //    }
+
+//        //    throw new Exception(JsonConvert.SerializeObject(errors));
+//        //}
+
+//        //public async Task<AuthResponseDto> Login([FromBody] LoginUserDto dtoUser)
+//        //{
+//        //    var user = await _context.User.Where(u=>u.Email == dtoUser.Email && u.Password == u).FirstOrDefaultAsync();
+//        //    //var user = _context.Users
+//        //    //.Where(u => u.Email == dtoUser.Email)
+//        //    //.FirstOrDefault();
+//        //    if (user != null)
+//        //    {
+//        //        ClaimsPrincipal claims = DecodeToken(await GenerateJwtToken(user));
+//        //        //var role = claims.Claims.First(Claim => Claim.Type == ClaimTypes.Role).Value;
+//        //        var verif = await _userManager.CheckPasswordAsync(user, dtoUser.Password);
+//        //        if (verif)
+//        //        {
+//        //            return new AuthResponseDto()
+//        //            {
+//        //                UserId = user.Id,
+//        //                UserName = user.UserName,
+//        //                Email = user.Email,
+//        //                Token = await GenerateJwtToken(user)
+//        //            };
+//        //        }
+//        //        else
+//        //        {
+//        //            throw new Exception("Invalid Password");
+//        //        }
+
+//        //    }
+//        //    else
+//        //    {
+
+//        //        throw new Exception("User " + dtoUser.Email + " not found");
+//        //    }
+
+            
+//        //}
+
+//        private async Task<string> GenerateJwtToken(User user)
+//        {
+//            // Now its ime to define the jwt token which will be responsible of creating our tokens
+//            var jwtTokenHandler = new JwtSecurityTokenHandler();
+
+//            // We get our secret from the appsettings
+//            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+
+//            // we define our token descriptor
+//            // We need to utilise claims which are properties in our token which gives information about the token
+//            // which belong to the specific user who it belongs to
+//            // so it could contain their id, name, email the good part is that these information
+//            // are generated by our server and identity framework which is valid and trusted
+//            var claims = await GetAllValidClaims(user);
+//            var tokenDescriptor = new SecurityTokenDescriptor
+//            {
+//                Subject = new ClaimsIdentity(claims),
+//                // the life span of the token needs to be shorter and utilise refresh token to keep the user signedin
+//                // but since this is a demo app we can extend it to fit our current need
+//                Expires = DateTime.UtcNow.AddMinutes(1),
+//                // here we are adding the encryption alogorithim information which will be used to decrypt our token
+//                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+//            };
+
+//            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
+
+//            var jwtToken = jwtTokenHandler.WriteToken(token);
+
+//            return jwtToken;
+//        }
+
+//        private async Task<List<Claim>> GetAllValidClaims(User user)
+//        {
+//            var _options = new IdentityOptions();
+//            var claims = new List<Claim>
+//            {
+//                new Claim("Id", user.Id),
+//                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+//                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+//                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+//            };
+
+//            var userClaims = await _userManager.GetClaimsAsync(user);
+//            claims.AddRange(userClaims);
+
+//            var userRoles = await _userManager.GetRolesAsync(user);
+//            foreach (var userRole in userRoles)
+//            {
+
+
+//                var role = await _roleManager.FindByNameAsync(userRole);
+
+//                if (role != null)
+//                {
+//                    claims.Add(new Claim(ClaimTypes.Role, userRole));
+//                    var roleClaims = await _roleManager.GetClaimsAsync(role);
+//                    foreach (var roleClaim in roleClaims)
+//                    {
+//                        claims.Add(roleClaim);
+//                    }
+//                }
+//            }
+//            return claims;
+//        }
+
+//        public ClaimsPrincipal DecodeToken(string token)
+//        {
+//            string secret = "hgdryadstiedediaudhdgsdcGSHDHS";
+//            var key = Encoding.ASCII.GetBytes(secret);
+//            var handler = new JwtSecurityTokenHandler();
+//            var validations = new TokenValidationParameters
+//            {
+//                ValidateIssuerSigningKey = true,
+//                IssuerSigningKey = new SymmetricSecurityKey(key),
+//                ValidateIssuer = false,
+//                ValidateAudience = false
+//            };
+
+//            return handler.ValidateToken(token, validations, out var tokenSecure);
+//        }
+//    }
+//}

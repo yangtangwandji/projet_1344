@@ -1,0 +1,34 @@
+<p *ngIf="!joueurs"><em>Loading...</em></p>
+
+<div *ngIf="joueurs">
+  <h1>Liste de Joueurs</h1>
+  <button class="btn btn-primary" [routerLink]="['/create']">Ajouter un joueur</button>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Age</th>
+        <th scope="col">Equipe</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let joueur of joueurs">
+        <th scope="row">{{ joueur.id }}</th>
+        <td>{{ joueur.nom }}</td>
+        <td>{{ joueur.prenom }}</td>
+        <td>{{ joueur.age }}</td>
+        <td>{{ joueur.equipe }}</td>
+        <td>
+          <button class="btn btn-danger" (click)="delete(joueur.id)">Effacer</button> &nbsp;&nbsp;
+          <button class="btn btn-primary" [routerLink]="['/update/',joueur.id]">Modifier</button>
+        </td>
+      </tr>
+      <tr>
+    </tbody>
+  </table>
+</div>
+
